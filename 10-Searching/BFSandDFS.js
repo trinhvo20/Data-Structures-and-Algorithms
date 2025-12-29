@@ -1,4 +1,5 @@
-// Build a Binary Search Tree in JS (left < root < right)
+// Given a Binary Search Tree in JS (left < root < right)
+// Implement BFS (level order traversal)
 
 class Node {
     constructor(data) {
@@ -13,6 +14,7 @@ class BST {
         this.root = null;
     }
 
+    // ========================== INSERT ====================================
     insert(data) {
         const newNode = new Node(data);
         if (this.root === null) {
@@ -38,7 +40,7 @@ class BST {
             }
         }
     }
-    // ==============================================================
+    // ========================== SEARCH ====================================
     search(data) {
         return this._searchNode(this.root, data);
     }
@@ -54,7 +56,7 @@ class BST {
             return this._searchNode(node.right, data);
         }
     }
-    // ==============================================================
+    // ========================= REMOVE =====================================
     remove(data) {
         this.root = this._removeNode(this.root, data);
         return this;
@@ -96,6 +98,91 @@ class BST {
         }
         return node;
     }
+
+    // ============================== BFS ================================
+    bfs() {
+        const result = [];
+        const queue = [this.root];
+
+        while (queue.length > 0) {
+            const node = queue.shift(); // dequeue
+            result.push(node.data);
+            if (node.left) {
+                queue.push(node.left);
+            }
+            if (node.right) {
+                queue.push(node.right);
+            }
+        }
+        return result;
+    }
+
+    bfsRec() {
+        const result = [];
+        this._bfsRec([this.root], result);
+        return result;
+    }
+
+    _bfsRec(queue, result) {
+        if (queue.length === 0) {
+            return;
+        }
+        const node = queue.shift();
+        result.push(node.data);
+        if (node.left) {
+            queue.push(node.left);
+        }
+        if (node.right) {
+            queue.push(node.right);
+        }
+        return this._bfsRec(queue, result);
+    }
+
+    // ============================== DFS ================================
+    inorder() {
+        const result = [];
+        this._inorder(this.root, result);
+        return result;
+    }
+
+    _inorder(node, result) {
+        if (node !== null) {
+            this._inorder(node.left, result);
+            result.push(node.data);
+            this._inorder(node.right, result);
+        }
+        return result;
+    }
+
+    preorder() {
+        const result = []; 
+        this._preorder(this.root, result);
+        return result;
+    }
+
+    _preorder(node, result) {
+        if (node !== null) {
+            result.push(node.data);
+            this._preorder(node.left, result);
+            this._preorder(node.right, result);
+        }
+        return result;
+    }   
+
+    postorder() {
+        const result = [];
+        this._postorder(this.root, result);
+        return result;
+    }   
+
+    _postorder(node, result) {  
+        if (node !== null) {
+            this._postorder(node.left, result);
+            this._postorder(node.right, result);
+            result.push(node.data);
+        }   
+        return result;
+    }
 }
 
 function traverse(node) {
@@ -105,8 +192,7 @@ function traverse(node) {
     return tree;
 }
 
-// ==============================================================================
-// MAIN
+// =============================== MAIN =============================================
 
 const bst = new BST();
 bst.insert(9);
@@ -116,14 +202,21 @@ bst.insert(20);
 bst.insert(170);
 bst.insert(15);
 bst.insert(1);
-console.log(JSON.stringify(traverse(bst.root)))
+
 /*
      9
    4   20
 1  6  15  170
 */
 
-console.log(bst.search(1432))
+// BFS - [9, 4, 20, 1, 6, 15, 170]
+console.log(bst.bfs()); 
+console.log(bst.bfsRec());  
 
-console.log(bst.remove(20))
-console.log(JSON.stringify(traverse(bst.root)))
+// DFS
+// Inorder - 1, 4, 6, 9, 15, 20, 170
+// Preorder - 9, 4, 1, 6, 20, 15, 170
+// Postorder - 1, 6, 4, 15, 170, 20, 9
+console.log(bst.inorder());
+console.log(bst.preorder());
+console.log(bst.postorder());
